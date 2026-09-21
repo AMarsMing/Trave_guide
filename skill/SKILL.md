@@ -76,18 +76,35 @@ description: "生成精美可分享的旅游攻略HTML页面。输入目的地�
 - 每个景点一个 `<g class="spot-dot">` 圆点 + `<text>` 名称标签
   - 必去景点/粉丝打卡点圆点大一号或换强调色
 - **路线切换**：SVG 下方一排按钮"全部路线 / Day1 / Day2…"，点击时只显示对应 `.route-group`，其他 `display:none`
-- **点击景点弹窗**：圆点 `onclick` 弹出详情（名称、一句话介绍、预计游玩时间、门票、**"高德导航"按钮**）
-- **高德导航链接**：`<a href="https://uri.amap.com/search?keyword=景点名&city=城市名" target="_blank">`，不需要 API Key，直接跳高德 App/网页
+- **点击景点弹窗**：圆点 `onclick` 弹出详情（名称、一句话介绍、预计游玩时间、门票、底部并排"高德地图/百度地图"两个大按钮）
+- **高德/百度双导航链接**：
+  - **直接用网页版URL当 `<a href>`，target=_blank**，不要用JS scheme唤起（实测在各种手机浏览器里都不可靠：location.href/iframe scheme都会被拦截，微信内置浏览器直接屏蔽）：
+    - 高德：`https://uri.amap.com/search?keyword=景点名&city=城市名&callnative=1`（callnative=1让网页版尝试唤起App）
+    - 百度：`https://map.baidu.com/mobile/webapp/search/search/flatnew?query=景点名&city=城市名URL编码`（如南京=`南京`）。**不要用** `map.baidu.com/?newmap=1&qt=s&wd=XXX&c=315`——这是百度内部API，直接返回JSON不是网页
+    - 弹窗按钮和浮层按钮都用真 `<a>` 标签，href在showSpotDetail/pickNav里动态设置，不要用 `javascript:void(0)` 包JS函数——实测 `onclick="openAmap(_curKw)"` 在手机上经常无反应
+    - 用户在网页版地图里会看到"打开App"按钮，自己点即可
+  - **时间线里只放一个"🧭 导航"小按钮**（不要并排两个，挤），点击时弹出小浮层让用户选"高德地图/百度地图"，选完才跳转
+  - 浮层实现：固定定位 div + 两个 `<a>`，点击按钮时 `pickNav(keyword, event)` 把浮层定位到鼠标位置，点空白处关闭
+  - **inline onclick 里不要写 `event.stopPropagation()`**——手机微信/内置浏览器里全局 `event` 对象不稳定，会导致整行JS报错、按钮点不动。改成 `onclick="pickNav('关键词', event)"`，把 `ev.stopPropagation()` 放到函数内部
+  - **没有具体地址的行不要导航按钮**：如"抵达XX·入住酒店"（酒店没具体名）、"自由活动"、"秦淮河夜景"（这是活动描述不是POI）这类流程/活动行，不要放导航键；只有具体景点/餐厅/地点才放
+  - 数据里只存高德URL，JS用正则从 `keyword=([^&]+)` 提取关键词再拼百度URL，不要重复维护两份数据
 
 ### Step 6: 发布成公开链接
 
-用户要"能分享的链接"时才发布（不要默认发布）：
+用户要"能分享的链接"时才发布（不要默认发布）。有两种渠道，按用户需求选：
+
+**渠道A：GitHub Pages（真正公开，任何人免登录访问，推荐用于对外分享）**
+- 把 index.html + assets/ 传到 GitHub 仓库根目录
+- Settings → Pages → Branch 选 main，/root 保存
+- 等1分钟，链接形如 `https://<用户名>.github.io/<仓库名>/`
+- 适合：发给微信好友、朋友圈、不登录就能看
+- 注意：图片路径写成 `assets/xxx.jpg`（相对路径），不要多套一层子目录导致 Pages 找不到 index.html
+
+**渠道B：doubao-html（豆包内部发布，需登录豆包才能看）**
 ```powershell
 cd 到产物目录
 lark-cli apps +deploy --file-path './xxx.html'
-# 返回 app_id 和 release_id，然后轮询：
 lark-cli apps +release-get --app-id <app_id> --release-id <release_id>
-# 等 status=finished，读 online_url，用 present_files 交付该链接
 ```
 `+deploy` 会自动爬取同目录相对路径引用的图片一起打包。**首次返回的 app_id 要记住**，复发更新用 `--app-id`。
 
@@ -98,8 +115,18 @@ lark-cli apps +release-get --app-id <app_id> --release-id <release_id>
 - **不要加多余模块**：用户没要的"概览卡片""统计数字"之类不要加；保持攻略本身。
 - **不用 emoji**，用内联 SVG 图标。
 - **路线合并原则**：同一天的打卡点必须合并到该天路线，不要单独拉线；用圆点颜色区分即可。
+- **小说/影视剧打卡点不要把原名当标题/标签**：用户提到某小说取景地打卡，正文里可以提，但标题、地图标签、弹窗tag一律用中性描述（如"文艺打卡"），不要把小说名/角色名直接写进标题——用户明确要求不要把小说名作为标题。
 - **不要做箭头 marker**：SVG 路线末端不要 `marker-end="url(#arrow)"`。
-- **响应式**：手机端要能看，地图 SVG 用 `width:100%; height:auto`。
+- **移动端适配（必做）**：
+  - `<meta name="viewport" content="width=device-width, initial-scale=1.0">`
+  - 卡片网格用 `repeat(auto-fit, minmax(270px, 1fr))`，窄屏自动单列
+  - SVG地图 `width:100%; height:auto; display:block`
+  - 表格必须外包 `<div style="overflow-x:auto">` 并设 `min-width`，手机上可横滑
+  - 写两档媒体查询：`@media (max-width:768px)`（平板/大手机）和 `@media (max-width:480px)`（小手机）
+  - 768px 里：hero高度降到52vh、容器padding缩到14px、时间线圆点和缩进缩小、弹窗info grid变1fr 1fr、按钮padding缩小、美食/tips网格变单列
+  - 480px 里：hero再降到48vh、弹窗info grid变单列、h1字号降到1.9rem
+  - 弹窗 `max-width:460px; width:100%; margin:16px; max-height:85vh; overflow-y:auto`
+  - 时间线左侧竖线+圆点布局在小屏缩进从36px缩到28px
 
 ## 交付
 
