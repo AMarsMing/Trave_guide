@@ -580,8 +580,8 @@
         </div>
         <div class="modal-desc" id="modalDesc">景点详细介绍...</div>
         <div class="modal-nav-row">
-            <a href="#" id="modalAmapLink" target="_blank" class="modal-nav-btn amap">高德地图</a>
-            <a href="#" id="modalBaiduLink" target="_blank" class="modal-nav-btn baidu">百度地图</a>
+            <a href="javascript:void(0)" onclick="openAmap(_curKw)" class="modal-nav-btn amap">高德地图</a>
+            <a href="javascript:void(0)" onclick="openBaidu(_curKw)" class="modal-nav-btn baidu">百度地图</a>
         </div>
     </div>
 </div>
@@ -644,9 +644,7 @@
         document.getElementById('modalTransport').textContent = spot.transport;
         document.getElementById('modalBestTime').textContent = spot.bestTime;
         document.getElementById('modalDesc').textContent = spot.desc;
-        var kw = (spot.navUrl.match(/keyword=([^&]+)/) || [,''])[1];
-        document.getElementById('modalAmapLink').href = 'https://uri.amap.com/search?keyword=' + kw + '&city=南京&callnative=1';
-        document.getElementById('modalBaiduLink').href = 'https://api.map.baidu.com/direction?destination=' + encodeURIComponent(kw) + '&mode=driving&region=南京&output=html&src=webapp.guide';
+        window._curKw = (spot.navUrl.match(/keyword=([^&]+)/) || [,''])[1];
         document.getElementById('spotModal').classList.add('active');
         document.body.style.overflow = 'hidden';
     }
@@ -666,21 +664,51 @@
 
 <div id="navPicker" style="display:none;position:fixed;z-index:9999;background:#fff;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.18);padding:8px;min-width:180px;">
     <div style="padding:8px 12px;font-size:.78rem;color:#999;border-bottom:1px solid #f0f0f0;margin-bottom:4px;">选择导航App</div>
-    <a id="pickerAmap" href="#" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;color:#1976D2;text-decoration:none;font-size:.9rem;font-weight:600;">
+    <a href="javascript:void(0)" onclick="openAmap(_curPickerKw);document.getElementById('navPicker').style.display='none';" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;color:#1976D2;text-decoration:none;font-size:.9rem;font-weight:600;">
         <span style="width:28px;height:28px;background:#2196F3;color:#fff;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;">高</span>
         高德地图
     </a>
-    <a id="pickerBaidu" href="#" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;color:#0078d4;text-decoration:none;font-size:.9rem;font-weight:600;">
+    <a href="javascript:void(0)" onclick="openBaidu(_curPickerKw);document.getElementById('navPicker').style.display='none';" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;color:#0078d4;text-decoration:none;font-size:.9rem;font-weight:600;">
         <span style="width:28px;height:28px;background:#00a6fb;color:#fff;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;">百</span>
         百度地图
     </a>
 </div>
 <script>
+function openAmap(kw){
+    if(!kw) return;
+    var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    var scheme = (isIOS ? 'iosamap://poi?keywords=' : 'androidamap://poi?keywords=') + encodeURIComponent(kw) + '&city=' + encodeURIComponent('南京') + '&dev=0&src=webapp.guide';
+    var web = 'https://uri.amap.com/search?keyword=' + encodeURIComponent(kw) + '&city=南京&callnative=1';
+    var start = Date.now();
+    var gone = false;
+    function fallback(){
+        if(!gone && Date.now()-start < 3000 && !document.hidden){
+            window.location.href = web;
+        }
+    }
+    document.addEventListener('visibilitychange', function(){ if(document.hidden) gone = true; }, {once:true});
+    window.location.href = scheme;
+    setTimeout(fallback, 2000);
+}
+function openBaidu(kw){
+    if(!kw) return;
+    var scheme = 'baidumap://map/place/search?query=' + encodeURIComponent(kw) + '&region=' + encodeURIComponent('南京') + '&src=webapp.guide';
+    var web = 'https://api.map.baidu.com/direction?destination=' + encodeURIComponent(kw) + '&mode=driving&region=南京&output=html&src=webapp.guide';
+    var start = Date.now();
+    var gone = false;
+    function fallback(){
+        if(!gone && Date.now()-start < 3000 && !document.hidden){
+            window.location.href = web;
+        }
+    }
+    document.addEventListener('visibilitychange', function(){ if(document.hidden) gone = true; }, {once:true});
+    window.location.href = scheme;
+    setTimeout(fallback, 2000);
+}
 function pickNav(kw, ev){
     if (ev) ev.stopPropagation();
     var picker = document.getElementById('navPicker');
-    document.getElementById('pickerAmap').href = 'https://uri.amap.com/search?keyword='+encodeURIComponent(kw)+'&city=南京&callnative=1';
-    document.getElementById('pickerBaidu').href = 'https://api.map.baidu.com/direction?destination='+encodeURIComponent(kw)+'&mode=driving&region=南京&output=html&src=webapp.guide';
+    window._curPickerKw = kw;
     picker.style.display = 'block';
     var x = ev.clientX - 90, y = ev.clientY + 12;
     if (x < 8) x = 8;
