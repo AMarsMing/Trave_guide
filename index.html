@@ -580,8 +580,8 @@
         </div>
         <div class="modal-desc" id="modalDesc">景点详细介绍...</div>
         <div class="modal-nav-row">
-            <a href="javascript:void(0)" onclick="openAmap(_curKw)" class="modal-nav-btn amap">高德地图</a>
-            <a href="javascript:void(0)" onclick="openBaidu(_curKw)" class="modal-nav-btn baidu">百度地图</a>
+            <a id="modalAmapLink" href="https://uri.amap.com/search?keyword=南京&city=南京" target="_blank" class="modal-nav-btn amap">高德地图</a>
+            <a id="modalBaiduLink" href="https://map.baidu.com/" target="_blank" class="modal-nav-btn baidu">百度地图</a>
         </div>
     </div>
 </div>
@@ -644,7 +644,9 @@
         document.getElementById('modalTransport').textContent = spot.transport;
         document.getElementById('modalBestTime').textContent = spot.bestTime;
         document.getElementById('modalDesc').textContent = spot.desc;
-        window._curKw = (spot.navUrl.match(/keyword=([^&]+)/) || [,''])[1];
+        var kw = (spot.navUrl.match(/keyword=([^&]+)/) || [,''])[1];
+        document.getElementById('modalAmapLink').href = 'https://uri.amap.com/search?keyword=' + kw + '&city=南京&callnative=1';
+        document.getElementById('modalBaiduLink').href = 'https://map.baidu.com/?newmap=1&qt=s&wd=' + kw + '&c=315';
         document.getElementById('spotModal').classList.add('active');
         document.body.style.overflow = 'hidden';
     }
@@ -664,11 +666,11 @@
 
 <div id="navPicker" style="display:none;position:fixed;z-index:9999;background:#fff;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.18);padding:8px;min-width:180px;">
     <div style="padding:8px 12px;font-size:.78rem;color:#999;border-bottom:1px solid #f0f0f0;margin-bottom:4px;">选择导航App</div>
-    <a href="javascript:void(0)" onclick="openAmap(_curPickerKw);document.getElementById('navPicker').style.display='none';" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;color:#1976D2;text-decoration:none;font-size:.9rem;font-weight:600;">
+    <a id="pickerAmap" href="https://uri.amap.com/" target="_blank" onclick="document.getElementById('navPicker').style.display='none';" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;color:#1976D2;text-decoration:none;font-size:.9rem;font-weight:600;">
         <span style="width:28px;height:28px;background:#2196F3;color:#fff;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;">高</span>
         高德地图
     </a>
-    <a href="javascript:void(0)" onclick="openBaidu(_curPickerKw);document.getElementById('navPicker').style.display='none';" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;color:#0078d4;text-decoration:none;font-size:.9rem;font-weight:600;">
+    <a id="pickerBaidu" href="https://map.baidu.com/" target="_blank" onclick="document.getElementById('navPicker').style.display='none';" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;color:#0078d4;text-decoration:none;font-size:.9rem;font-weight:600;">
         <span style="width:28px;height:28px;background:#00a6fb;color:#fff;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;">百</span>
         百度地图
     </a>
@@ -706,7 +708,8 @@ function openBaidu(kw){
 function pickNav(kw, ev){
     if (ev) ev.stopPropagation();
     var picker = document.getElementById('navPicker');
-    window._curPickerKw = kw;
+    document.getElementById('pickerAmap').href = 'https://uri.amap.com/search?keyword=' + encodeURIComponent(kw) + '&city=南京&callnative=1';
+    document.getElementById('pickerBaidu').href = 'https://map.baidu.com/?newmap=1&qt=s&wd=' + encodeURIComponent(kw) + '&c=315';
     picker.style.display = 'block';
     var x = ev.clientX - 90, y = ev.clientY + 12;
     if (x < 8) x = 8;
