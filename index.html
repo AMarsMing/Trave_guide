@@ -645,8 +645,8 @@
         document.getElementById('modalBestTime').textContent = spot.bestTime;
         document.getElementById('modalDesc').textContent = spot.desc;
         var kw = (spot.navUrl.match(/keyword=([^&]+)/) || [,''])[1];
-        document.getElementById('modalAmapLink').href = 'https://uri.amap.com/search?keyword=' + kw + '&city=南京';
-        document.getElementById('modalBaiduLink').href = 'https://map.baidu.com/?newmap=1&qt=s&wd=' + kw + '&c=315';
+        document.getElementById('modalAmapLink').href = 'https://uri.amap.com/search?keyword=' + kw + '&city=南京&callnative=1';
+        document.getElementById('modalBaiduLink').href = 'https://api.map.baidu.com/direction?destination=' + encodeURIComponent(kw) + '&mode=driving&region=南京&output=html&src=webapp.guide';
         document.getElementById('spotModal').classList.add('active');
         document.body.style.overflow = 'hidden';
     }
@@ -679,8 +679,8 @@
 function pickNav(kw, ev){
     if (ev) ev.stopPropagation();
     var picker = document.getElementById('navPicker');
-    document.getElementById('pickerAmap').href = 'https://uri.amap.com/search?keyword='+encodeURIComponent(kw)+'&city=南京';
-    document.getElementById('pickerBaidu').href = 'https://map.baidu.com/?newmap=1&qt=s&wd='+encodeURIComponent(kw)+'&c=315';
+    document.getElementById('pickerAmap').href = 'https://uri.amap.com/search?keyword='+encodeURIComponent(kw)+'&city=南京&callnative=1';
+    document.getElementById('pickerBaidu').href = 'https://api.map.baidu.com/direction?destination='+encodeURIComponent(kw)+'&mode=driving&region=南京&output=html&src=webapp.guide';
     picker.style.display = 'block';
     var x = ev.clientX - 90, y = ev.clientY + 12;
     if (x < 8) x = 8;
