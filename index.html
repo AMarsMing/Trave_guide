@@ -106,7 +106,13 @@
         .modal-info-item .label { font-size:.73rem; color:var(--text-light); }
         .modal-info-item .value { font-size:.88rem; font-weight:600; }
         .modal-desc { font-size:.88rem; color:var(--text-light); line-height:1.7; }
-        .modal-nav-btn { display:inline-flex; align-items:center; gap:6px; margin-top:16px; padding:10px 20px; background:linear-gradient(135deg,var(--primary-light),var(--primary)); color:#fff; text-decoration:none; border-radius:12px; font-size:.9rem; font-weight:500; }
+        .modal-nav-row { display:flex; gap:10px; margin-top:16px; }
+        .modal-nav-btn { flex:1; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:11px 16px; color:#fff; text-decoration:none; border-radius:12px; font-size:.9rem; font-weight:600; transition:transform .15s, box-shadow .15s; }
+        .modal-nav-btn:active { transform:scale(.97); }
+        .modal-nav-btn.amap { background:linear-gradient(135deg,#2196F3,#1976D2); box-shadow:0 4px 12px rgba(33,150,243,.3); }
+        .modal-nav-btn.baidu { background:linear-gradient(135deg,#00a6fb,#0078d4); box-shadow:0 4px 12px rgba(0,168,251,.3); }
+        .nav-link.baidu { color:#0078d4; background:rgba(0,120,212,.08); }
+        .nav-link.baidu:hover { background:rgba(0,120,212,.15); }
 
         .footer { text-align:center; padding:36px 20px; color:var(--text-light); font-size:.84rem; }
 
@@ -116,10 +122,35 @@
         .route-hidden { display:none; }
 
         @media (max-width:768px) {
+            .hero { height:52vh; min-height:340px; }
             .hero-content h1 { font-size:2.2rem; letter-spacing:4px; }
-            .hero-meta { flex-direction:column; gap:10px; padding:14px 28px; }
-            .container { padding:28px 16px; }
-            .day-section,.budget-card,.map-card { padding:20px; }
+            .hero-subtitle { font-size:.92rem; padding:0 12px; }
+            .hero-meta { flex-direction:row; justify-content:space-around; gap:8px; padding:14px 16px; flex-wrap:wrap; }
+            .hero-meta-item .value { font-size:1.05rem; }
+            .container { padding:24px 14px; }
+            .day-section,.budget-card,.map-card { padding:18px 16px; }
+            .section-title { font-size:1.25rem; }
+            .section-title .icon { width:34px; height:34px; font-size:1rem; }
+            .day-badge { width:46px; height:46px; margin-right:12px; border-radius:12px; }
+            .timeline { padding-left:28px; }
+            .timeline::before { left:6px; }
+            .timeline-dot { left:-28px; width:16px; height:16px; }
+            .timeline-title { font-size:.98rem; }
+            .timeline-desc { font-size:.85rem; }
+            .budget-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+            .budget-table { min-width:480px; }
+            .modal { padding:22px 18px; margin:16px; max-height:85vh; }
+            .modal-info { grid-template-columns:1fr 1fr; gap:8px; padding:10px; }
+            .modal-info-item .value { font-size:.82rem; }
+            .nav-link { font-size:.8rem; padding:4px 10px; }
+            .map-legend { gap:8px; }
+            .legend-btn { padding:6px 12px; font-size:.8rem; }
+            .food-grid, .tips-grid { grid-template-columns:1fr; }
+        }
+        @media (max-width:480px) {
+            .hero { height:48vh; min-height:300px; }
+            .hero-content h1 { font-size:1.9rem; letter-spacing:3px; }
+            .modal-info { grid-template-columns:1fr; }
         }
     </style>
 </head>
@@ -299,28 +330,28 @@
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">14:00 - 15:00</div>
-                    <div class="timeline-title">抵达南京南 · 入住酒店 <a href="https://uri.amap.com/search?keyword=南京南站&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title">抵达南京南 · 入住酒店</div>
                     <div class="timeline-desc">高铁抵达南京南站，办理入住放行李。酒店选在南站附近，地铁直达各景点。</div>
                     <div class="timeline-meta"><span>🚇 地铁1号线</span><span>⏱️ 约1小时</span></div>
                 </div>
                 <div class="timeline-item" onclick="showSpotDetail('laomendong')">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">15:30 - 17:30</div>
-                    <div class="timeline-title">老门东历史文化街区 <a href="https://uri.amap.com/search?keyword=老门东历史文化街区&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title">老门东历史文化街区 <a href="javascript:void(0)" onclick="pickNav(\'老门东历史文化街区\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">明清风格古街区，青石板路、白墙黑瓦，比夫子庙更清静文艺。推荐蒋有记锅贴、左师傅梅花糕。</div>
                     <div class="timeline-meta"><span>🎫 免费</span><span>🚇 3号线武定门站2号口</span><span>⏱️ 2小时</span></div>
                 </div>
                 <div class="timeline-item" onclick="showSpotDetail('fuzimiao')">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">18:00 - 19:30</div>
-                    <div class="timeline-title">夫子庙晚餐 <a href="https://uri.amap.com/search?keyword=夫子庙&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title">夫子庙晚餐 <a href="javascript:void(0)" onclick="pickNav(\'夫子庙\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">沿秦淮河畔散步，找临河餐厅吃南京菜。推荐秦淮八绝小吃、鸭血粉丝汤、盐水鸭。</div>
                     <div class="timeline-meta"><span>🍜 人均 ¥80</span><span>🚶 步行10分钟</span></div>
                 </div>
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">19:30 - 21:00</div>
-                    <div class="timeline-title">秦淮河夜景 <a href="https://uri.amap.com/search?keyword=秦淮河画舫&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title">秦淮河夜景 <a href="javascript:void(0)" onclick="pickNav(\'秦淮河画舫\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">夜幕下秦淮河灯光璀璨，画舫游河（可选¥80）。国庆期间有特别布置，沿河拍照超出片。</div>
                     <div class="timeline-meta"><span>🎫 免费</span><span>⏱️ 1.5小时</span></div>
                 </div>
@@ -340,28 +371,28 @@
                 <div class="timeline-item xx-dot" onclick="showSpotDetail('xilebao')">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">08:30 - 09:30</div>
-                    <div class="timeline-title"><span class="xx-tag">文艺打卡</span>喜乐报亭（喜乐便利店） <a href="https://uri.amap.com/search?keyword=喜乐便利店 江苏路 南京&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title"><span class="xx-tag">文艺打卡</span>喜乐报亭（喜乐便利店） <a href="javascript:void(0)" onclick="pickNav(\'喜乐便利店 江苏路 南京\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">江添盛望路过的报亭原型，就在江苏路基督教堂隔壁。书粉必打卡，早上人少好拍照。旁边就是三号门。</div>
                     <div class="timeline-meta"><span>🎫 免费</span><span>🚇 4号线云南路站步行8分钟</span><span>⏱️ 1小时</span></div>
                 </div>
                 <div class="timeline-item xx-dot" onclick="showSpotDetail('xianfeng')">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">09:30 - 10:30</div>
-                    <div class="timeline-title"><span class="xx-tag">文艺打卡</span>先锋书店（颐和书馆） <a href="https://uri.amap.com/search?keyword=先锋书店颐和书馆 江苏路39号&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title"><span class="xx-tag">文艺打卡</span>先锋书店（颐和书馆） <a href="javascript:void(0)" onclick="pickNav(\'先锋书店颐和书馆 江苏路39号\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">江苏路39号，离喜乐报亭步行2分钟。知名文学地标，"大地上的异乡者"必拍。</div>
                     <div class="timeline-meta"><span>🎫 免费</span><span>🚶 步行2分钟</span><span>⏱️ 1小时</span></div>
                 </div>
                 <div class="timeline-item xx-dot" onclick="showSpotDetail('sanhaomen')">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">10:30 - 11:00</div>
-                    <div class="timeline-title"><span class="xx-tag">文艺打卡</span>江苏路三号门 <a href="https://uri.amap.com/search?keyword=江苏路3号门 南京&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title"><span class="xx-tag">文艺打卡</span>江苏路三号门 <a href="javascript:void(0)" onclick="pickNav(\'江苏路3号门 南京\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">小说中"三号门"原型，就在喜乐便利店对面。书粉必打卡点，站在门口脑补小说名场面。</div>
                     <div class="timeline-meta"><span>🎫 免费</span><span>🚶 步行2分钟</span><span>⏱️ 30分钟</span></div>
                 </div>
                 <div class="timeline-item xx-dot" onclick="showSpotDetail('wutong')">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">11:30 - 13:00</div>
-                    <div class="timeline-title"><span class="xx-tag">必去</span>梧桐大道（陵园路） <a href="https://uri.amap.com/search?keyword=陵园路梧桐大道 南京&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title"><span class="xx-tag">必去</span>梧桐大道（陵园路） <a href="javascript:void(0)" onclick="pickNav(\'陵园路梧桐大道 南京\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">【必去】南京最著名的梧桐长廊！1928年种植的法国梧桐枝叶交织成天然穹顶。从江苏路打车约15分钟到苜蓿园站。</div>
                     <div class="timeline-meta"><span>🎫 免费</span><span>🚇 2号线苜蓿园站1号口</span><span>⏱️ 1.5小时</span></div>
                 </div>
@@ -375,21 +406,21 @@
                 <div class="timeline-item" onclick="showSpotDetail('zhongshanling')">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">14:00 - 15:30</div>
-                    <div class="timeline-title">中山陵 <a href="https://uri.amap.com/search?keyword=中山陵 南京&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title">中山陵 <a href="javascript:void(0)" onclick="pickNav(\'中山陵 南京\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">孙中山先生陵寝，392级台阶依山而建。提前公众号预约。穿舒适鞋子，登顶俯瞰南京城。</div>
                     <div class="timeline-meta"><span>🎫 免费（需预约）</span><span>⏱️ 1.5小时</span></div>
                 </div>
                 <div class="timeline-item xx-dot" onclick="showSpotDetail('yinyuetai')">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">15:30 - 16:30</div>
-                    <div class="timeline-title"><span class="xx-tag">文艺打卡</span>中山陵音乐台 <a href="https://uri.amap.com/search?keyword=中山陵音乐台 南京&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title"><span class="xx-tag">文艺打卡</span>中山陵音乐台 <a href="javascript:void(0)" onclick="pickNav(\'中山陵音乐台 南京\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">南京最治愈的喂鸽地！门票10元。成群白鸽飞舞超出片，下午3点鸽群最活跃。</div>
                     <div class="timeline-meta"><span>🎫 ¥10</span><span>🚶 步行5分钟</span><span>⏱️ 1小时</span></div>
                 </div>
                 <div class="timeline-item" onclick="showSpotDetail('mingxiaoling')">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">16:30 - 18:00</div>
-                    <div class="timeline-title">明孝陵石象路 <a href="https://uri.amap.com/search?keyword=明孝陵石象路 南京&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title">明孝陵石象路 <a href="javascript:void(0)" onclick="pickNav(\'明孝陵石象路 南京\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">明朝朱元璋陵墓，600年历史。石象路神道秋日绝美，"南京最美600米"。</div>
                     <div class="timeline-meta"><span>🎫 含联票¥100</span><span>⏱️ 1.5小时</span></div>
                 </div>
@@ -409,7 +440,7 @@
                 <div class="timeline-item" onclick="showSpotDetail('jinianguan')">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">09:00 - 12:00</div>
-                    <div class="timeline-title">侵华日军南京大屠杀遇难同胞纪念馆 <a href="https://uri.amap.com/search?keyword=侵华日军南京大屠杀遇难同胞纪念馆&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title">侵华日军南京大屠杀遇难同胞纪念馆 <a href="javascript:void(0)" onclick="pickNav(\'侵华日军南京大屠杀遇难同胞纪念馆\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">【必去】每个中国人都应当到访的地方。完整留存1937年历史，含万人坑遗址、幸存者证言。提前7天18:00抢票。</div>
                     <div class="timeline-meta"><span>🎫 免费（需预约）</span><span>🚇 2号线云锦路站2号口</span><span>⏱️ 3小时</span></div>
                 </div>
@@ -423,14 +454,14 @@
                 <div class="timeline-item" onclick="showSpotDetail('zongtongfu')">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">14:00 - 16:30</div>
-                    <div class="timeline-title">总统府 <a href="https://uri.amap.com/search?keyword=总统府 南京&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title">总统府 <a href="javascript:void(0)" onclick="pickNav(\'总统府 南京\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">民国政府中枢，中西合璧建筑群。看大堂、子超楼、煦园假山，了解民国历史。</div>
                     <div class="timeline-meta"><span>🎫 ¥35</span><span>🚇 2号线大行宫站1号口</span><span>⏱️ 2.5小时</span></div>
                 </div>
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">17:00 - 19:30</div>
-                    <div class="timeline-title">1912街区 · 晚餐 <a href="https://uri.amap.com/search?keyword=南京1912街区&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title">1912街区 · 晚餐 <a href="javascript:void(0)" onclick="pickNav(\'南京1912街区\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">紧邻总统府的民国风休闲街区，青砖小洋房改造成餐厅酒吧。</div>
                     <div class="timeline-meta"><span>🍜 人均 ¥120</span></div>
                 </div>
@@ -450,7 +481,7 @@
                 <div class="timeline-item" onclick="showSpotDetail('bowuyuan')">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">09:30 - 12:30</div>
-                    <div class="timeline-title">南京博物院 <a href="https://uri.amap.com/search?keyword=南京博物院&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title">南京博物院 <a href="javascript:void(0)" onclick="pickNav(\'南京博物院\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">全国三大博物院之一，馆藏40万+文物。必看：民国馆（沉浸式民国街道，超好拍）。提前7天预约。</div>
                     <div class="timeline-meta"><span>🎫 免费（需预约）</span><span>🚇 2号线明故宫站1号口</span><span>⏱️ 3小时</span></div>
                 </div>
@@ -464,14 +495,14 @@
                 <div class="timeline-item" onclick="showSpotDetail('xuanwuhu')">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">14:30 - 16:00</div>
-                    <div class="timeline-title">玄武湖公园 <a href="https://uri.amap.com/search?keyword=玄武湖公园 南京&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title">玄武湖公园 <a href="javascript:void(0)" onclick="pickNav(\'玄武湖公园 南京\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">江南最大城内公园，环湖散步看紫峰大厦和明城墙。从玄武门进，告别南京。</div>
                     <div class="timeline-meta"><span>🎫 免费</span><span>🚇 1号线玄武门站</span><span>⏱️ 1.5小时</span></div>
                 </div>
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">16:30 - 17:30</div>
-                    <div class="timeline-title">前往南京南站 · 返程 <a href="https://uri.amap.com/search?keyword=南京南站&city=南京" target="_blank" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title">前往南京南站 · 返程 <a href="javascript:void(0)" onclick="pickNav(\'南京南站\', event)" class="nav-link">🧭 导航</a></div>
                     <div class="timeline-desc">玄武湖乘地铁1号线直达南京南站，建议预留1小时到站时间。</div>
                     <div class="timeline-meta"><span>🚇 1号线直达约25分钟</span></div>
                 </div>
@@ -485,6 +516,7 @@
             预算明细（人均）
         </div>
         <div class="budget-card">
+            <div class="budget-table-wrap">
             <table class="budget-table">
                 <thead><tr><th>类别</th><th>明细</th><th>费用（¥）</th></tr></thead>
                 <tbody>
@@ -496,6 +528,7 @@
                     <tr class="total-row"><td>总计</td><td>4天3晚人均预估（不含往返大交通）</td><td>¥1,985</td></tr>
                 </tbody>
             </table>
+            </div>
             <div class="budget-note">
                 💡 以上为舒适档预算。江苏路文艺打卡点全部免费，主要花费在住宿和餐饮。穷游可压缩至¥1300左右。
             </div>
@@ -546,7 +579,10 @@
             <div class="modal-info-item"><div class="label">最佳时间</div><div class="value" id="modalBestTime">上午</div></div>
         </div>
         <div class="modal-desc" id="modalDesc">景点详细介绍...</div>
-        <a href="#" id="modalNavLink" target="_blank" class="modal-nav-btn">🧭 打开高德导航</a>
+        <div class="modal-nav-row">
+            <a href="#" id="modalAmapLink" target="_blank" class="modal-nav-btn amap">高德地图</a>
+            <a href="#" id="modalBaiduLink" target="_blank" class="modal-nav-btn baidu">百度地图</a>
+        </div>
     </div>
 </div>
 
@@ -608,7 +644,9 @@
         document.getElementById('modalTransport').textContent = spot.transport;
         document.getElementById('modalBestTime').textContent = spot.bestTime;
         document.getElementById('modalDesc').textContent = spot.desc;
-        document.getElementById('modalNavLink').href = spot.navUrl;
+        var kw = (spot.navUrl.match(/keyword=([^&]+)/) || [,''])[1];
+        document.getElementById('modalAmapLink').href = 'https://uri.amap.com/search?keyword=' + kw + '&city=南京';
+        document.getElementById('modalBaiduLink').href = 'https://map.baidu.com/?newmap=1&qt=s&wd=' + kw + '&c=315';
         document.getElementById('spotModal').classList.add('active');
         document.body.style.overflow = 'hidden';
     }
@@ -626,5 +664,34 @@
     });
 </script>
 
+<div id="navPicker" style="display:none;position:fixed;z-index:9999;background:#fff;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.18);padding:8px;min-width:180px;">
+    <div style="padding:8px 12px;font-size:.78rem;color:#999;border-bottom:1px solid #f0f0f0;margin-bottom:4px;">选择导航App</div>
+    <a id="pickerAmap" href="#" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;color:#1976D2;text-decoration:none;font-size:.9rem;font-weight:600;">
+        <span style="width:28px;height:28px;background:#2196F3;color:#fff;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;">高</span>
+        高德地图
+    </a>
+    <a id="pickerBaidu" href="#" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;color:#0078d4;text-decoration:none;font-size:.9rem;font-weight:600;">
+        <span style="width:28px;height:28px;background:#00a6fb;color:#fff;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;">百</span>
+        百度地图
+    </a>
+</div>
+<script>
+function pickNav(kw, ev){
+    if (ev) ev.stopPropagation();
+    var picker = document.getElementById('navPicker');
+    document.getElementById('pickerAmap').href = 'https://uri.amap.com/search?keyword='+encodeURIComponent(kw)+'&city=南京';
+    document.getElementById('pickerBaidu').href = 'https://map.baidu.com/?newmap=1&qt=s&wd='+encodeURIComponent(kw)+'&c=315';
+    picker.style.display = 'block';
+    var x = ev.clientX - 90, y = ev.clientY + 12;
+    if (x < 8) x = 8;
+    if (x > window.innerWidth - 200) x = window.innerWidth - 200;
+    picker.style.left = x + 'px';
+    picker.style.top = y + 'px';
+}
+document.addEventListener('click', function(e){
+    var p = document.getElementById('navPicker');
+    if (p && p.style.display === 'block' && !p.contains(e.target)) p.style.display = 'none';
+});
+</scr' + 'ipt>
 </body>
 </html>
