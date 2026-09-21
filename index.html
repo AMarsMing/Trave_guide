@@ -351,7 +351,7 @@
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-time">19:30 - 21:00</div>
-                    <div class="timeline-title">秦淮河夜景 <a href="javascript:void(0)" onclick="pickNav(\'秦淮河画舫\', event)" class="nav-link">🧭 导航</a></div>
+                    <div class="timeline-title">秦淮河夜景</div>
                     <div class="timeline-desc">夜幕下秦淮河灯光璀璨，画舫游河（可选¥80）。国庆期间有特别布置，沿河拍照超出片。</div>
                     <div class="timeline-meta"><span>🎫 免费</span><span>⏱️ 1.5小时</span></div>
                 </div>
@@ -674,36 +674,34 @@
     </a>
 </div>
 <script>
+function _tryScheme(scheme, web){
+    var gone = false;
+    var onVis = function(){ if(document.hidden) gone = true; };
+    document.addEventListener('visibilitychange', onVis);
+    var iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = scheme;
+    document.body.appendChild(iframe);
+    setTimeout(function(){
+        if(iframe.parentNode) document.body.removeChild(iframe);
+        document.removeEventListener('visibilitychange', onVis);
+        if(!gone && !document.hidden){
+            window.location.href = web;
+        }
+    }, 1800);
+}
 function openAmap(kw){
     if(!kw) return;
     var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
     var scheme = (isIOS ? 'iosamap://poi?keywords=' : 'androidamap://poi?keywords=') + encodeURIComponent(kw) + '&city=' + encodeURIComponent('南京') + '&dev=0&src=webapp.guide';
     var web = 'https://uri.amap.com/search?keyword=' + encodeURIComponent(kw) + '&city=南京&callnative=1';
-    var start = Date.now();
-    var gone = false;
-    function fallback(){
-        if(!gone && Date.now()-start < 3000 && !document.hidden){
-            window.location.href = web;
-        }
-    }
-    document.addEventListener('visibilitychange', function(){ if(document.hidden) gone = true; }, {once:true});
-    window.location.href = scheme;
-    setTimeout(fallback, 2000);
+    _tryScheme(scheme, web);
 }
 function openBaidu(kw){
     if(!kw) return;
     var scheme = 'baidumap://map/place/search?query=' + encodeURIComponent(kw) + '&region=' + encodeURIComponent('南京') + '&src=webapp.guide';
     var web = 'https://api.map.baidu.com/direction?destination=' + encodeURIComponent(kw) + '&mode=driving&region=南京&output=html&src=webapp.guide';
-    var start = Date.now();
-    var gone = false;
-    function fallback(){
-        if(!gone && Date.now()-start < 3000 && !document.hidden){
-            window.location.href = web;
-        }
-    }
-    document.addEventListener('visibilitychange', function(){ if(document.hidden) gone = true; }, {once:true});
-    window.location.href = scheme;
-    setTimeout(fallback, 2000);
+    _tryScheme(scheme, web);
 }
 function pickNav(kw, ev){
     if (ev) ev.stopPropagation();
